@@ -2,150 +2,152 @@
  * Deque implemented by array.
  */
 public class ArrayDeque<T> {
-
-    private T[] items;
-    private int left;
-    private int right;
-    private int capacity = 8;
-
-    public ArrayDeque() {
-        items = (T[]) new Object[capacity];
-        left = right = 0;
-    }
-
-    /** Adds an item of type T to the front of the deque. */
-    public void addFirst(T item) {
-        if (isFull()) {
-            resize((int) (capacity * 1.5));
-        }
-        left = (left - 1 + capacity) % capacity;
-        items[left] = item;
-    }
-
-    /** Adds an item of type T to the back of the deque. */
-    public void addLast(T item) {
-        if (isFull()) {
-            resize((int) (capacity * 1.5));
-        }
-        items[right] = item;
-        right = (right + 1 + capacity) % capacity;
-    }
-
-    /** Returns true if deque is empty, false otherwise. */
-    public boolean isEmpty() {
-        return left == right;
-    }
-
-    /** Returns the number of items in the deque. */
-    public int size() {
-        return (right - left + capacity) % capacity;
-    }
-
-    /** Prints the items in the deque from first to last, separated by a space. */
-    public void printDeque() {
-        if (left < right) {
-            for (int i = left; i < right; i++) {
-                if (i == right - 1) {
-                    System.out.println(items[i]);
-                    break;
-                }
-                System.out.print(items[i] + " ");
-            }
-        } else if (left > right) {
-            for (int i = left; i < capacity; i++) {
-                System.out.print(items[i] + " ");
-            }
-            for (int i = 0; i < right; i++) {
-                if (i == right - 1) {
-                    System.out.println(items[i]);
-                    break;
-                }
-                System.out.print(items[i] + " ");
-            }
-        }
-    }
-
-    /**
-     * Removes and returns the item at the front of the deque. If no such item
-     * exists, returns null.
-     */
-    public T removeFirst() {
-        if (isEmpty()) {
-            return null;
-        }
-        T res = items[left];
-        left = (left + 1) % capacity;
-        if (isLowUsageRate()) {
-            resize((int) (capacity * 0.5));
-        }
-        return res;
-    }
-
-    /**
-     * Removes and returns the item at the back of the deque. If no such item
-     * exists, returns null.
-     */
-    public T removeLast() {
-        if (isEmpty()) {
-            return null;
-        }
-        right = (right - 1 + capacity) % capacity;
-        T res = items[right];
-        if (isLowUsageRate()) {
-            resize((int) (capacity * 0.5));
-        }
-        return res;
-    }
-
-    /**
-     * Gets the item at the given index, where 0 is the front, 1 is the next item,
-     * and so forth. If no such item exists, returns null. Must not alter the deque!
-     */
-    public T get(int index) {
-        if (index < 0 || index >= size() || isEmpty()) {
-            return null;
-        }
-        if (left < right) {
-            return items[index + left];
-        } else if (left > right) {
-            if (index + left < capacity) {
-                return items[index + left];
-            } else {
-                return items[(index + left) % capacity];
-            }
-        }
-        return null;
-    }
-
-    private boolean isFull() {
-        return size() == capacity - 1;
-    }
-
-    private boolean isLowUsageRate() {
-        return capacity >= 16 && size() / (double) capacity < 0.25;
-    }
-
-    private void resize(int newSize) {
-        T[] newArray = (T[]) new Object[newSize];
-
-        int size = size();
-        if (left < right) {
-            for (int i = left, j = 0; i < right && j < size; i++, j++) {
-                newArray[j] = items[i];
-            }
-        } else if (left > right) {
-            int j = 0;
-            for (int i = left; j < capacity - left; i++, j++) {
-                newArray[j] = items[i];
-            }
-            for (int i = 0; j < size; i++, j++) {
-                newArray[j] = items[i];
-            }
-        }
-        left = 0;
-        right = size;
-        items = newArray;
-        capacity = newSize;
-    }
+      public T[] deque;
+      public int i;
+      public int j;
+      public int capacity;
+      public int size;
+      public ArrayDeque(){
+          capacity=8;
+          deque=(T[])new Object[capacity];
+          i=j=0;
+          size=0;
+      }
+      public void addFirst(T item){
+           if(this.isFull()){
+                this.resize((int)(capacity*1.5));
+           }
+           i=(i-1+capacity)%capacity;
+           deque[i]=item;
+           size+=1;
+      }
+      public void addLast(T item){
+          if(this.isFull()){
+              this.resize((int)(capacity*1.5));
+          }
+          deque[j]=item;
+          j=(j+1)%capacity;
+          size+=1;
+      }
+      public boolean isEmpty(){
+          return size==0;
+      }
+      public int size(){
+          return size;
+      }
+      public void printDeque(){
+          if(this.isEmpty()){
+              return;
+          }
+          if(i<j){
+              for(int c=0;c<size;c++){
+                  System.out.println(deque[c+i]);
+              }
+          }
+          if(i>j){
+              for(int c=i;c<capacity;c++){
+                  System.out.println(deque[i]);
+              }
+              for(int c=0;c<j;c++){
+                  System.out.println(deque[capacity-i+c]);
+              }
+          }
+      }
+      public T removeFirst(){
+          if(isEmpty()){
+              return null;
+          }
+          if(this.notFull()){
+              this.resize((int)(capacity*0.5));
+          }
+          int c=i;
+          i=(i+1)%capacity;
+          size-=1;
+          return deque[c];
+      }
+      public T removeLast(){
+          if(isEmpty()){
+              return null;
+          }
+          if(this.notFull()){
+              this.resize((int)(capacity*0.5));
+          }
+          int c=(j-1+capacity)%capacity;
+          j=c;
+          size-=1;
+          return deque[c];
+      }
+      public T get(int Index){
+          if(i<j){
+              if(Index>=i && Index<j){
+                  return deque[Index];
+              }
+          }
+          if(Index>=i || Index<j){
+              return deque[Index];
+          }
+          return null;
+      }
+      public boolean notFull(){
+          if(capacity<16){
+              return false;
+          }
+          double a=size/(double)capacity;
+          return a<0.25;
+      }
+      public boolean isFull(){
+          return size==capacity-1;
+      }
+      public void resize(int newsize){
+          if(this.notFull()){
+              T[] Deque=(T[])new Object[newsize];
+              if(i<j){
+                  for(int c=i;c<i+size;c++) {
+                      Deque[c - i] = deque[c];
+                  }
+              }
+              if(i>j){
+                  for(int c=i;c<capacity;c++){
+                      Deque[c-i]=deque[c];
+                  }
+                  for(int c=0;c<j;c++){
+                      Deque[capacity-i+c]=deque[c];
+                  }
+              }
+              deque=Deque;
+          }
+          if(this.isFull()){
+              T[] Deque=(T[])new Object[newsize];
+              if(i<j){
+                  for(int c=i;c<i+size;c++) {
+                      Deque[c - i] = deque[c];
+                  }
+              }
+              if(i>j){
+                  for(int c=i;c<capacity;c++){
+                      Deque[c-i]=deque[c];
+                  }
+                  for(int c=0;c<j;c++){
+                      Deque[capacity-i+c]=deque[c];
+                  }
+              }
+              deque=Deque;
+          }
+          capacity=newsize;
+          i=0;
+          j=size;
+      }
+      public static void main(String[] args){
+          ArrayDeque list=new ArrayDeque();
+          list.addFirst(1);
+          list.addFirst(2);
+          list.addFirst(3);
+          list.addFirst(4);
+          list.addFirst(5);
+          list.addFirst(6);
+          list.addFirst(7);
+          list.addFirst(8);
+          list.removeFirst();
+      }
 
 }
