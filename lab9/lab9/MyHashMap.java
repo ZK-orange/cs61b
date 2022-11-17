@@ -70,8 +70,16 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             resize();
         }
     }
+    private void resize(){
+        ArrayMap<K,V>[] large=new ArrayMap[size*2];
+        ArrayMap<K,V>[] tmp=buckets;
+        for(int i=0;i<buckets.length;i++){
+            large[i]=buckets[i];
+        }
+        buckets=large;
+    }
 
-    private void resize() {
+    /*private void resize() {
         ArrayMap<K, V>[] larger = new ArrayMap[size * 2];
         ArrayMap<K, V>[] tmp = buckets;
         buckets = larger;
@@ -81,7 +89,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
                 put(key, b.get(key));
             }
         }
-    }
+    }*/
 
     /* Returns the number of key-value mappings in this map. */
     @Override
